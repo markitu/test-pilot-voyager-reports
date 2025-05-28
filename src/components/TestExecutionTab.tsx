@@ -2,24 +2,68 @@
 import { useState } from 'react';
 import { TestSuiteCard } from './TestSuiteCard';
 import { mockTestSuites } from '../data/mockData';
-import { TestSuite } from '../types/test';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button, Card, CheckboxField } from '@admiral-ds/react-ui';
+import styled from 'styled-components';
 import { Play, RefreshCw } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+`;
+
+const HeaderCard = styled(Card)`
+  background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+  border: 1px solid #0066cc;
+  padding: 1.5rem;
+`;
+
+const HeaderTitle = styled.h2`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #0066cc;
+  margin: 0 0 0.5rem 0;
+`;
+
+const HeaderDescription = styled.p`
+  color: #666;
+  margin: 0 0 1rem 0;
+  line-height: 1.5;
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: 1rem;
+`;
+
+const SuitesGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1.5rem;
+`;
+
+const SuiteCardWrapper = styled.div`
+  position: relative;
+`;
+
+const SelectionCheckbox = styled.div`
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+`;
 
 export const TestExecutionTab = () => {
   const [runningSuites, setRunningSuites] = useState<Set<string>>(new Set());
   const [selectedSuites, setSelectedSuites] = useState<Set<string>>(new Set());
-  const { toast } = useToast();
 
   const handleRunSuite = (suiteId: string) => {
     setRunningSuites(prev => new Set(prev).add(suiteId));
     
-    toast({
-      title: "Test Suite Started",
-      description: `Running ${mockTestSuites.find(s => s.id === suiteId)?.name}...`,
-    });
+    console.log(`Running ${mockTestSuites.find(s => s.id === suiteId)?.name}...`);
 
     // Simulate test execution
     setTimeout(() => {
@@ -29,20 +73,13 @@ export const TestExecutionTab = () => {
         return newSet;
       });
       
-      toast({
-        title: "Test Suite Completed",
-        description: `${mockTestSuites.find(s => s.id === suiteId)?.name} finished successfully!`,
-      });
+      console.log(`${mockTestSuites.find(s => s.id === suiteId)?.name} finished successfully!`);
     }, 5000);
   };
 
   const handleRunSelected = () => {
     if (selectedSuites.size === 0) {
-      toast({
-        title: "No suites selected",
-        description: "Please select at least one test suite to run.",
-        variant: "destructive"
-      });
+      console.log("Please select at least one test suite to run.");
       return;
     }
 
@@ -65,67 +102,54 @@ export const TestExecutionTab = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Play className="text-blue-600" size={24} />
-            Test Execution Center
-          </CardTitle>
-          <CardDescription>
-            Select and run automated test suites. Monitor execution progress and view results in real-time.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-4">
-            <Button 
-              onClick={handleRunSelected}
-              disabled={selectedSuites.size === 0}
-              className="bg-blue-600 hover:bg-blue-700"
-            >
-              <Play size={16} className="mr-2" />
-              Run Selected ({selectedSuites.size})
-            </Button>
-            <Button 
-              variant="outline"
-              onClick={() => setSelectedSuites(new Set())}
-              disabled={selectedSuites.size === 0}
-            >
-              <RefreshCw size={16} className="mr-2" />
-              Clear Selection
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+    <Container>
+      <HeaderCard>
+        <HeaderTitle>
+          <Play className="text-blue-600" size={24} />
+          Test Execution Center
+        </HeaderTitle>
+        <HeaderDescription>
+          Select and run automated test suites. Monitor execution progress and view results in real-time.
+        </HeaderDescription>
+        <ButtonGroup>
+          <Button 
+            onClick={handleRunSelected}
+            disabled={selectedSuites.size === 0}
+            variant="primary"
+            dimension="m"
+          >
+            <Play size={16} />
+            Run Selected ({selectedSuites.size})
+          </Button>
+          <Button 
+            variant="secondary"
+            dimension="m"
+            onClick={() => setSelectedSuites(new Set())}
+            disabled={selectedSuites.size === 0}
+          >
+            <RefreshCw size={16} />
+            Clear Selection
+          </Button>
+        </ButtonGroup>
+      </HeaderCard>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <SuitesGrid>
         {mockTestSuites.map((suite) => (
-          <div key={suite.id} className="relative">
-            <div 
-              className={`absolute top-4 right-4 z-10 w-5 h-5 border-2 rounded cursor-pointer transition-colors ${
-                selectedSuites.has(suite.id) 
-                  ? 'bg-blue-600 border-blue-600' 
-                  : 'bg-white border-gray-300 hover:border-blue-400'
-              }`}
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleSuiteSelection(suite.id);
-              }}
-            >
-              {selectedSuites.has(suite.id) && (
-                <div className="w-full h-full flex items-center justify-center text-white text-xs">
-                  ✓
-                </div>
-              )}
-            </div>
+          <SuiteCardWrapper key={suite.id}>
+            <SelectionCheckbox>
+              <CheckboxField
+                checked={selectedSuites.has(suite.id)}
+                onChange={() => toggleSuiteSelection(suite.id)}
+              />
+            </SelectionCheckbox>
             <TestSuiteCard
               suite={suite}
               onRun={handleRunSuite}
               isRunning={runningSuites.has(suite.id)}
             />
-          </div>
+          </SuiteCardWrapper>
         ))}
-      </div>
-    </div>
+      </SuitesGrid>
+    </Container>
   );
 };

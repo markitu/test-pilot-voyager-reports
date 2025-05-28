@@ -1,14 +1,112 @@
 
 import { Clock, CheckCircle, XCircle, SkipForward, Calendar } from 'lucide-react';
 import { TestRun } from '../types/test';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
+import { Card, Badge, ProgressBar } from '@admiral-ds/react-ui';
+import styled from 'styled-components';
 
 interface TestRunsListProps {
   runs: TestRun[];
   onSelectRun: (runId: string) => void;
 }
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const RunCard = styled(Card)`
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+  }
+`;
+
+const CardHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+`;
+
+const TitleSection = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+`;
+
+const StatusIndicator = styled.div<{ $status: string }>`
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: ${props => {
+    switch (props.$status) {
+      case 'completed': return '#4caf50';
+      case 'running': return '#2196f3';
+      case 'failed': return '#f44336';
+      default: return '#666';
+    }
+  }};
+`;
+
+const RunTitle = styled.h4`
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+`;
+
+const DateSection = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #666;
+`;
+
+const StatsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+`;
+
+const StatItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+`;
+
+const StatValue = styled.span<{ $color: string }>`
+  font-weight: 600;
+  color: ${props => props.$color};
+`;
+
+const ProgressSection = styled.div`
+  margin-top: 1rem;
+`;
+
+const ProgressHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+`;
+
+const ProgressLabel = styled.span`
+  color: #666;
+`;
+
+const ProgressValue = styled.span`
+  font-weight: 600;
+  color: #333;
+`;
 
 export const TestRunsList = ({ runs, onSelectRun }: TestRunsListProps) => {
   const formatDuration = (seconds: number) => {
@@ -26,79 +124,74 @@ export const TestRunsList = ({ runs, onSelectRun }: TestRunsListProps) => {
     }).format(date);
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'completed': return 'bg-green-500';
-      case 'running': return 'bg-blue-500';
-      case 'failed': return 'bg-red-500';
-      default: return 'bg-gray-500';
-    }
-  };
-
   const getSuccessRate = (run: TestRun) => {
     return (run.passedTests / run.totalTests) * 100;
   };
 
+  const getBadgeAppearance = (status: string) => {
+    switch (status) {
+      case 'completed': return 'success';
+      case 'running': return 'info';
+      case 'failed': return 'error';
+      default: return 'neutral';
+    }
+  };
+
   return (
-    <div className="space-y-4">
+    <Container>
       {runs.map((run) => (
-        <Card 
+        <RunCard 
           key={run.id} 
-          className="hover:shadow-md transition-shadow cursor-pointer"
           onClick={() => onSelectRun(run.id)}
         >
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className={`w-3 h-3 rounded-full ${getStatusColor(run.status)}`} />
-                <CardTitle className="text-lg">{run.suiteName}</CardTitle>
-                <Badge variant={run.status === 'completed' ? 'default' : 'secondary'}>
-                  {run.status}
-                </Badge>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-gray-500">
-                <Calendar size={16} />
-                <span>{formatDate(run.startTime)}</span>
-              </div>
-            </div>
+          <CardHeader>
+            <TitleSection>
+              <StatusIndicator $status={run.status} />
+              <RunTitle>{run.suiteName}</RunTitle>
+              <Badge appearance={getBadgeAppearance(run.status)}>
+                {run.status}
+              </Badge>
+            </TitleSection>
+            <DateSection>
+              <Calendar size={16} />
+              <span>{formatDate(run.startTime)}</span>
+            </DateSection>
           </CardHeader>
 
-          <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-              <div className="flex items-center gap-2">
-                <CheckCircle size={16} className="text-green-500" />
-                <span className="text-sm">
-                  <span className="font-semibold text-green-600">{run.passedTests}</span> passed
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <XCircle size={16} className="text-red-500" />
-                <span className="text-sm">
-                  <span className="font-semibold text-red-600">{run.failedTests}</span> failed
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <SkipForward size={16} className="text-yellow-500" />
-                <span className="text-sm">
-                  <span className="font-semibold text-yellow-600">{run.skippedTests}</span> skipped
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock size={16} className="text-gray-500" />
-                <span className="text-sm">{formatDuration(run.duration)}</span>
-              </div>
-            </div>
+          <StatsGrid>
+            <StatItem>
+              <CheckCircle size={16} style={{ color: '#4caf50' }} />
+              <span>
+                <StatValue $color="#4caf50">{run.passedTests}</StatValue> passed
+              </span>
+            </StatItem>
+            <StatItem>
+              <XCircle size={16} style={{ color: '#f44336' }} />
+              <span>
+                <StatValue $color="#f44336">{run.failedTests}</StatValue> failed
+              </span>
+            </StatItem>
+            <StatItem>
+              <SkipForward size={16} style={{ color: '#ff9800' }} />
+              <span>
+                <StatValue $color="#ff9800">{run.skippedTests}</StatValue> skipped
+              </span>
+            </StatItem>
+            <StatItem>
+              <Clock size={16} style={{ color: '#666' }} />
+              <span>{formatDuration(run.duration)}</span>
+            </StatItem>
+          </StatsGrid>
 
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span>Success Rate</span>
-                <span className="font-semibold">{getSuccessRate(run).toFixed(1)}%</span>
-              </div>
-              <Progress value={getSuccessRate(run)} className="h-2" />
-            </div>
-          </CardContent>
-        </Card>
+          <ProgressSection>
+            <ProgressHeader>
+              <ProgressLabel>Success Rate</ProgressLabel>
+              <ProgressValue>{getSuccessRate(run).toFixed(1)}%</ProgressValue>
+            </ProgressHeader>
+            <ProgressBar progress={getSuccessRate(run)} />
+          </ProgressSection>
+        </RunCard>
       ))}
-    </div>
+    </Container>
   );
 };

@@ -2,9 +2,86 @@
 import { useState } from 'react';
 import { TestExecutionTab } from '../components/TestExecutionTab';
 import { TestResultsTab } from '../components/TestResultsTab';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Button, Header, Tabs, TabContent } from '@admiral-ds/react-ui';
+import styled from 'styled-components';
 import { Play, BarChart3, Settings, Bug } from 'lucide-react';
+
+const Container = styled.div`
+  min-height: 100vh;
+  background-color: #f5f5f5;
+`;
+
+const MainContent = styled.main`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+`;
+
+const HeaderContainer = styled.div`
+  background: white;
+  border-bottom: 1px solid #e5e5e5;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+`;
+
+const HeaderContent = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const LogoSection = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+`;
+
+const LogoIcon = styled.div`
+  padding: 0.5rem;
+  background-color: #0066cc;
+  border-radius: 8px;
+  color: white;
+`;
+
+const LogoText = styled.div`
+  h1 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+  }
+  p {
+    font-size: 0.875rem;
+    color: #666;
+    margin: 0;
+  }
+`;
+
+const Footer = styled.footer`
+  background: white;
+  border-top: 1px solid #e5e5e5;
+  margin-top: 3rem;
+  padding: 1.5rem 0;
+`;
+
+const FooterContent = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: #666;
+`;
+
+const FooterRight = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`;
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState<'execution' | 'results'>('execution');
@@ -25,77 +102,66 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between py-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-600 rounded-lg">
-                <Bug className="text-white" size={24} />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">AutoTest Manager</h1>
-                <p className="text-sm text-gray-600">Automated testing dashboard inspired by Allure</p>
-              </div>
-            </div>
-            <Button variant="outline" size="sm">
-              <Settings size={16} className="mr-2" />
-              Settings
-            </Button>
-          </div>
-        </div>
-      </div>
+    <Container>
+      <HeaderContainer>
+        <HeaderContent>
+          <LogoSection>
+            <LogoIcon>
+              <Bug size={24} />
+            </LogoIcon>
+            <LogoText>
+              <h1>AutoTest Manager</h1>
+              <p>Automated testing dashboard inspired by Allure</p>
+            </LogoText>
+          </LogoSection>
+          <Button variant="secondary" dimension="m">
+            <Settings size={16} />
+            Settings
+          </Button>
+        </HeaderContent>
+      </HeaderContainer>
 
-      {/* Navigation Tabs */}
-      <div className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex space-x-8" aria-label="Tabs">
-            {tabs.map((tab) => {
-              const IconComponent = tab.icon;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                    activeTab === tab.id
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <IconComponent size={18} />
-                    <span>{tab.label}</span>
-                  </div>
-                </button>
-              );
-            })}
-          </nav>
-        </div>
-      </div>
+      <Tabs
+        activeTab={activeTab}
+        onActivateTab={(tabId) => setActiveTab(tabId as 'execution' | 'results')}
+        style={{ background: 'white', borderBottom: '1px solid #e5e5e5' }}
+      >
+        {tabs.map((tab) => {
+          const IconComponent = tab.icon;
+          return (
+            <TabContent
+              key={tab.id}
+              tabId={tab.id}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '1rem 1.5rem'
+              }}
+            >
+              <IconComponent size={18} />
+              <span>{tab.label}</span>
+            </TabContent>
+          );
+        })}
+      </Tabs>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <MainContent>
         {activeTab === 'execution' && <TestExecutionTab />}
         {activeTab === 'results' && <TestResultsTab />}
-      </main>
+      </MainContent>
 
-      {/* Footer */}
-      <footer className="bg-white border-t mt-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-gray-500">
-              AutoTest Manager - Powered by Admiral Design System
-            </p>
-            <div className="flex items-center gap-4 text-sm text-gray-500">
-              <span>Version 1.0.0</span>
-              <span>•</span>
-              <span>Last updated: {new Date().toLocaleDateString()}</span>
-            </div>
-          </div>
-        </div>
-      </footer>
-    </div>
+      <Footer>
+        <FooterContent>
+          <p>AutoTest Manager - Powered by Admiral Design System</p>
+          <FooterRight>
+            <span>Version 1.0.0</span>
+            <span>•</span>
+            <span>Last updated: {new Date().toLocaleDateString()}</span>
+          </FooterRight>
+        </FooterContent>
+      </Footer>
+    </Container>
   );
 };
 

@@ -1,9 +1,8 @@
 
 import { Play, Clock, FileCheck, AlertCircle } from 'lucide-react';
 import { TestSuite } from '../types/test';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Button, Card, Badge } from '@admiral-ds/react-ui';
+import styled from 'styled-components';
 
 interface TestSuiteCardProps {
   suite: TestSuite;
@@ -11,12 +10,98 @@ interface TestSuiteCardProps {
   isRunning?: boolean;
 }
 
+const StyledCard = styled(Card)`
+  padding: 1.5rem;
+  border-left: 4px solid #0066cc;
+  transition: all 0.2s ease;
+  height: 100%;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+  }
+`;
+
+const CardHeader = styled.div`
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+`;
+
+const TitleSection = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+`;
+
+const IconContainer = styled.div<{ $category: string }>`
+  padding: 0.5rem;
+  border-radius: 8px;
+  color: white;
+  background-color: ${props => {
+    switch (props.$category) {
+      case 'regression': return '#2196f3';
+      case 'smoke': return '#4caf50';
+      case 'hotfix': return '#f44336';
+      case 'integration': return '#9c27b0';
+      case 'unit': return '#ff9800';
+      default: return '#666';
+    }
+  }};
+`;
+
+const TitleText = styled.div`
+  h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 0.25rem 0;
+  }
+`;
+
+const Description = styled.p`
+  color: #666;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  margin: 0 0 1rem 0;
+`;
+
+const StatsContainer = styled.div`
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  color: #666;
+`;
+
+const StatItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+`;
+
+const LoadingSpinner = styled.div`
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid white;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 0.5rem;
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+`;
+
 const categoryColors = {
-  regression: 'bg-blue-500',
-  smoke: 'bg-green-500',
-  hotfix: 'bg-red-500',
-  integration: 'bg-purple-500',
-  unit: 'bg-yellow-500'
+  regression: '#2196f3',
+  smoke: '#4caf50',
+  hotfix: '#f44336',
+  integration: '#9c27b0',
+  unit: '#ff9800'
 };
 
 const categoryIcons = {
@@ -37,58 +122,55 @@ export const TestSuiteCard = ({ suite, onRun, isRunning = false }: TestSuiteCard
   };
 
   return (
-    <Card className="hover:shadow-lg transition-all duration-200 border-l-4 border-l-blue-500">
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className={`p-2 rounded-lg ${categoryColors[suite.category]} text-white`}>
-              <CategoryIcon size={20} />
-            </div>
-            <div>
-              <CardTitle className="text-lg font-semibold">{suite.name}</CardTitle>
-              <Badge variant="secondary" className="mt-1 text-xs">
-                {suite.category.toUpperCase()}
-              </Badge>
-            </div>
-          </div>
-        </div>
-        <CardDescription className="text-sm text-gray-600 mt-2">
-          {suite.description}
-        </CardDescription>
+    <StyledCard>
+      <CardHeader>
+        <TitleSection>
+          <IconContainer $category={suite.category}>
+            <CategoryIcon size={20} />
+          </IconContainer>
+          <TitleText>
+            <h3>{suite.name}</h3>
+            <Badge appearance="neutral" style={{ fontSize: '0.75rem', textTransform: 'uppercase' }}>
+              {suite.category}
+            </Badge>
+          </TitleText>
+        </TitleSection>
       </CardHeader>
       
-      <CardContent className="pt-0">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex gap-4 text-sm text-gray-600">
-            <div className="flex items-center gap-1">
-              <FileCheck size={16} />
-              <span>{suite.testCount} tests</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Clock size={16} />
-              <span>~{formatDuration(suite.estimatedDuration)}</span>
-            </div>
-          </div>
-        </div>
-        
-        <Button 
-          onClick={() => onRun(suite.id)}
-          disabled={isRunning}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-        >
-          {isRunning ? (
-            <>
-              <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" />
-              Running...
-            </>
-          ) : (
-            <>
-              <Play size={16} className="mr-2" />
-              Run Tests
-            </>
-          )}
-        </Button>
-      </CardContent>
-    </Card>
+      <Description>
+        {suite.description}
+      </Description>
+      
+      <StatsContainer>
+        <StatItem>
+          <FileCheck size={16} />
+          <span>{suite.testCount} tests</span>
+        </StatItem>
+        <StatItem>
+          <Clock size={16} />
+          <span>~{formatDuration(suite.estimatedDuration)}</span>
+        </StatItem>
+      </StatsContainer>
+      
+      <Button 
+        onClick={() => onRun(suite.id)}
+        disabled={isRunning}
+        variant="primary"
+        dimension="m"
+        style={{ width: '100%' }}
+      >
+        {isRunning ? (
+          <>
+            <LoadingSpinner />
+            Running...
+          </>
+        ) : (
+          <>
+            <Play size={16} />
+            Run Tests
+          </>
+        )}
+      </Button>
+    </StyledCard>
   );
 };
