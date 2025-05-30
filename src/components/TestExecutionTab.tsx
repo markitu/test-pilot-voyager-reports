@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import { TestSuiteCard } from './TestSuiteCard';
 import { mockTestSuites } from '../data/mockData';
-import { Button, Card, CheckboxField } from '@admiral-ds/react-ui';
 import styled from 'styled-components';
 import { Play, RefreshCw } from 'lucide-react';
 
@@ -12,9 +11,10 @@ const Container = styled.div`
   gap: 1.5rem;
 `;
 
-const HeaderCard = styled(Card)`
+const HeaderCard = styled.div`
   background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
   border: 1px solid #0066cc;
+  border-radius: 8px;
   padding: 1.5rem;
 `;
 
@@ -39,6 +39,45 @@ const ButtonGroup = styled.div`
   gap: 1rem;
 `;
 
+const Button = styled.button<{ $variant?: 'primary' | 'secondary'; $disabled?: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  border: 1px solid;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  ${props => props.$variant === 'primary' ? `
+    background: #0066cc;
+    border-color: #0066cc;
+    color: white;
+    
+    &:hover:not(:disabled) {
+      background: #0052a3;
+      border-color: #0052a3;
+    }
+  ` : `
+    background: white;
+    border-color: #e5e5e5;
+    color: #666;
+    
+    &:hover:not(:disabled) {
+      background: #f8f9fa;
+      border-color: #0066cc;
+      color: #0066cc;
+    }
+  `}
+  
+  ${props => props.$disabled && `
+    opacity: 0.5;
+    cursor: not-allowed;
+  `}
+`;
+
 const SuitesGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -54,6 +93,13 @@ const SelectionCheckbox = styled.div`
   top: 1rem;
   right: 1rem;
   z-index: 10;
+`;
+
+const Checkbox = styled.input`
+  width: 18px;
+  height: 18px;
+  accent-color: #0066cc;
+  cursor: pointer;
 `;
 
 export const TestExecutionTab = () => {
@@ -105,7 +151,7 @@ export const TestExecutionTab = () => {
     <Container>
       <HeaderCard>
         <HeaderTitle>
-          <Play className="text-blue-600" size={24} />
+          <Play size={24} />
           Test Execution Center
         </HeaderTitle>
         <HeaderDescription>
@@ -113,19 +159,17 @@ export const TestExecutionTab = () => {
         </HeaderDescription>
         <ButtonGroup>
           <Button 
+            $variant="primary"
+            $disabled={selectedSuites.size === 0}
             onClick={handleRunSelected}
-            disabled={selectedSuites.size === 0}
-            variant="primary"
-            dimension="m"
           >
             <Play size={16} />
             Run Selected ({selectedSuites.size})
           </Button>
           <Button 
-            variant="secondary"
-            dimension="m"
+            $variant="secondary"
+            $disabled={selectedSuites.size === 0}
             onClick={() => setSelectedSuites(new Set())}
-            disabled={selectedSuites.size === 0}
           >
             <RefreshCw size={16} />
             Clear Selection
@@ -137,7 +181,8 @@ export const TestExecutionTab = () => {
         {mockTestSuites.map((suite) => (
           <SuiteCardWrapper key={suite.id}>
             <SelectionCheckbox>
-              <CheckboxField
+              <Checkbox
+                type="checkbox"
                 checked={selectedSuites.has(suite.id)}
                 onChange={() => toggleSuiteSelection(suite.id)}
               />

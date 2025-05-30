@@ -2,10 +2,10 @@
 import { useState } from 'react';
 import { TestExecutionTab } from '../components/TestExecutionTab';
 import { TestResultsTab } from '../components/TestResultsTab';
-import { Button, Header, Tabs, TabContent } from '@admiral-ds/react-ui';
 import styled from 'styled-components';
 import { Play, BarChart3, Settings, Bug } from 'lucide-react';
 
+// Using custom components since Admiral UI structure is different
 const Container = styled.div`
   min-height: 100vh;
   background-color: #f5f5f5;
@@ -56,6 +56,56 @@ const LogoText = styled.div`
     font-size: 0.875rem;
     color: #666;
     margin: 0;
+  }
+`;
+
+const TabsContainer = styled.div`
+  background: white;
+  border-bottom: 1px solid #e5e5e5;
+`;
+
+const TabsList = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+`;
+
+const TabButton = styled.button<{ $active: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  background: ${props => props.$active ? '#f8f9fa' : 'transparent'};
+  border: none;
+  border-bottom: 2px solid ${props => props.$active ? '#0066cc' : 'transparent'};
+  color: ${props => props.$active ? '#0066cc' : '#666'};
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #f8f9fa;
+    color: #0066cc;
+  }
+`;
+
+const SettingsButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #f8f9fa;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  color: #666;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #e9ecef;
+    color: #333;
   }
 `;
 
@@ -114,37 +164,30 @@ const Index = () => {
               <p>Automated testing dashboard inspired by Allure</p>
             </LogoText>
           </LogoSection>
-          <Button variant="secondary" dimension="m">
+          <SettingsButton>
             <Settings size={16} />
             Settings
-          </Button>
+          </SettingsButton>
         </HeaderContent>
       </HeaderContainer>
 
-      <Tabs
-        activeTab={activeTab}
-        onActivateTab={(tabId) => setActiveTab(tabId as 'execution' | 'results')}
-        style={{ background: 'white', borderBottom: '1px solid #e5e5e5' }}
-      >
-        {tabs.map((tab) => {
-          const IconComponent = tab.icon;
-          return (
-            <TabContent
-              key={tab.id}
-              tabId={tab.id}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                padding: '1rem 1.5rem'
-              }}
-            >
-              <IconComponent size={18} />
-              <span>{tab.label}</span>
-            </TabContent>
-          );
-        })}
-      </Tabs>
+      <TabsContainer>
+        <TabsList>
+          {tabs.map((tab) => {
+            const IconComponent = tab.icon;
+            return (
+              <TabButton
+                key={tab.id}
+                $active={activeTab === tab.id}
+                onClick={() => setActiveTab(tab.id)}
+              >
+                <IconComponent size={18} />
+                <span>{tab.label}</span>
+              </TabButton>
+            );
+          })}
+        </TabsList>
+      </TabsContainer>
 
       <MainContent>
         {activeTab === 'execution' && <TestExecutionTab />}

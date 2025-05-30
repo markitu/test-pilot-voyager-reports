@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { TestRunsList } from './TestRunsList';
 import { TestStatsDashboard } from './TestStatsDashboard';
 import { mockTestRuns, mockStatistics } from '../data/mockData';
-import { Card } from '@admiral-ds/react-ui';
 import styled from 'styled-components';
 import { BarChart3, TrendingUp } from 'lucide-react';
 
@@ -13,9 +12,10 @@ const Container = styled.div`
   gap: 1.5rem;
 `;
 
-const HeaderCard = styled(Card)`
+const HeaderCard = styled.div`
   background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%);
   border: 1px solid #4caf50;
+  border-radius: 8px;
   padding: 1.5rem;
 `;
 
@@ -35,8 +35,11 @@ const HeaderDescription = styled.p`
   line-height: 1.5;
 `;
 
-const SectionCard = styled(Card)`
+const SectionCard = styled.div`
+  background: white;
+  border-radius: 8px;
   padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
 const SectionTitle = styled.h3`

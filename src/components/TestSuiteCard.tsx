@@ -1,7 +1,6 @@
 
 import { Play, Clock, FileCheck, AlertCircle } from 'lucide-react';
 import { TestSuite } from '../types/test';
-import { Button, Card, Badge } from '@admiral-ds/react-ui';
 import styled from 'styled-components';
 
 interface TestSuiteCardProps {
@@ -10,9 +9,12 @@ interface TestSuiteCardProps {
   isRunning?: boolean;
 }
 
-const StyledCard = styled(Card)`
+const StyledCard = styled.div`
+  background: white;
+  border-radius: 8px;
   padding: 1.5rem;
   border-left: 4px solid #0066cc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.2s ease;
   height: 100%;
 
@@ -60,6 +62,35 @@ const TitleText = styled.div`
   }
 `;
 
+const Badge = styled.span<{ $category: string }>`
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  background-color: ${props => {
+    switch (props.$category) {
+      case 'regression': return '#e3f2fd';
+      case 'smoke': return '#e8f5e8';
+      case 'hotfix': return '#ffebee';
+      case 'integration': return '#f3e5f5';
+      case 'unit': return '#fff3e0';
+      default: return '#f5f5f5';
+    }
+  }};
+  color: ${props => {
+    switch (props.$category) {
+      case 'regression': return '#2196f3';
+      case 'smoke': return '#4caf50';
+      case 'hotfix': return '#f44336';
+      case 'integration': return '#9c27b0';
+      case 'unit': return '#ff9800';
+      default: return '#666';
+    }
+  }};
+`;
+
 const Description = styled.p`
   color: #666;
   font-size: 0.875rem;
@@ -81,6 +112,33 @@ const StatItem = styled.div`
   gap: 0.25rem;
 `;
 
+const Button = styled.button<{ $disabled?: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: #0066cc;
+  border: 1px solid #0066cc;
+  border-radius: 6px;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: #0052a3;
+    border-color: #0052a3;
+  }
+
+  ${props => props.$disabled && `
+    opacity: 0.7;
+    cursor: not-allowed;
+  `}
+`;
+
 const LoadingSpinner = styled.div`
   width: 1rem;
   height: 1rem;
@@ -88,21 +146,12 @@ const LoadingSpinner = styled.div`
   border-top: 2px solid transparent;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin-right: 0.5rem;
 
   @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
 `;
-
-const categoryColors = {
-  regression: '#2196f3',
-  smoke: '#4caf50',
-  hotfix: '#f44336',
-  integration: '#9c27b0',
-  unit: '#ff9800'
-};
 
 const categoryIcons = {
   regression: FileCheck,
@@ -130,7 +179,7 @@ export const TestSuiteCard = ({ suite, onRun, isRunning = false }: TestSuiteCard
           </IconContainer>
           <TitleText>
             <h3>{suite.name}</h3>
-            <Badge appearance="neutral" style={{ fontSize: '0.75rem', textTransform: 'uppercase' }}>
+            <Badge $category={suite.category}>
               {suite.category}
             </Badge>
           </TitleText>
@@ -154,10 +203,7 @@ export const TestSuiteCard = ({ suite, onRun, isRunning = false }: TestSuiteCard
       
       <Button 
         onClick={() => onRun(suite.id)}
-        disabled={isRunning}
-        variant="primary"
-        dimension="m"
-        style={{ width: '100%' }}
+        $disabled={isRunning}
       >
         {isRunning ? (
           <>

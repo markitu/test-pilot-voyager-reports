@@ -1,7 +1,6 @@
 
 import { Clock, CheckCircle, XCircle, SkipForward, Calendar } from 'lucide-react';
 import { TestRun } from '../types/test';
-import { Card, Badge, ProgressBar } from '@admiral-ds/react-ui';
 import styled from 'styled-components';
 
 interface TestRunsListProps {
@@ -15,8 +14,11 @@ const Container = styled.div`
   gap: 1rem;
 `;
 
-const RunCard = styled(Card)`
+const RunCard = styled.div`
+  background: white;
+  border-radius: 8px;
   padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   transition: all 0.2s ease;
 
@@ -58,6 +60,31 @@ const RunTitle = styled.h4`
   font-weight: 600;
   color: #333;
   margin: 0;
+`;
+
+const Badge = styled.span<{ $status: string }>`
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: capitalize;
+  background-color: ${props => {
+    switch (props.$status) {
+      case 'completed': return '#e8f5e8';
+      case 'running': return '#e3f2fd';
+      case 'failed': return '#ffebee';
+      default: return '#f5f5f5';
+    }
+  }};
+  color: ${props => {
+    switch (props.$status) {
+      case 'completed': return '#4caf50';
+      case 'running': return '#2196f3';
+      case 'failed': return '#f44336';
+      default: return '#666';
+    }
+  }};
 `;
 
 const DateSection = styled.div`
@@ -108,6 +135,21 @@ const ProgressValue = styled.span`
   color: #333;
 `;
 
+const ProgressBar = styled.div`
+  width: 100%;
+  height: 8px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  overflow: hidden;
+`;
+
+const ProgressFill = styled.div<{ $progress: number }>`
+  height: 100%;
+  width: ${props => props.$progress}%;
+  background-color: #4caf50;
+  transition: width 0.3s ease;
+`;
+
 export const TestRunsList = ({ runs, onSelectRun }: TestRunsListProps) => {
   const formatDuration = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
@@ -128,15 +170,6 @@ export const TestRunsList = ({ runs, onSelectRun }: TestRunsListProps) => {
     return (run.passedTests / run.totalTests) * 100;
   };
 
-  const getBadgeAppearance = (status: string) => {
-    switch (status) {
-      case 'completed': return 'success';
-      case 'running': return 'info';
-      case 'failed': return 'error';
-      default: return 'neutral';
-    }
-  };
-
   return (
     <Container>
       {runs.map((run) => (
@@ -148,7 +181,7 @@ export const TestRunsList = ({ runs, onSelectRun }: TestRunsListProps) => {
             <TitleSection>
               <StatusIndicator $status={run.status} />
               <RunTitle>{run.suiteName}</RunTitle>
-              <Badge appearance={getBadgeAppearance(run.status)}>
+              <Badge $status={run.status}>
                 {run.status}
               </Badge>
             </TitleSection>
@@ -188,7 +221,9 @@ export const TestRunsList = ({ runs, onSelectRun }: TestRunsListProps) => {
               <ProgressLabel>Success Rate</ProgressLabel>
               <ProgressValue>{getSuccessRate(run).toFixed(1)}%</ProgressValue>
             </ProgressHeader>
-            <ProgressBar progress={getSuccessRate(run)} />
+            <ProgressBar>
+              <ProgressFill $progress={getSuccessRate(run)} />
+            </ProgressBar>
           </ProgressSection>
         </RunCard>
       ))}
