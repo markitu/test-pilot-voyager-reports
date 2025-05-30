@@ -21,7 +21,7 @@ export const TestResultsTab = () => {
           <BarChart3 size={24} className="text-green-600" />
           <T font="Header/H3">Test Results & Analytics</T>
         </div>
-        <T font="Body/BodyL">
+        <T font="Body/BodyM">
           Comprehensive view of test execution results, trends, and performance metrics.
         </T>
       </div>
