@@ -19,4 +19,11 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      external: [
+        /@admiral-ds\/fonts\/.*\.ttf$/,
+      ],
+    },
+  },
 }));
