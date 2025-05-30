@@ -2,105 +2,8 @@
 import { useState } from 'react';
 import { TestSuiteCard } from './TestSuiteCard';
 import { mockTestSuites } from '../data/mockData';
-import styled from 'styled-components';
 import { Play, RefreshCw } from 'lucide-react';
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-`;
-
-const HeaderCard = styled.div`
-  background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
-  border: 1px solid #0066cc;
-  border-radius: 8px;
-  padding: 1.5rem;
-`;
-
-const HeaderTitle = styled.h2`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #0066cc;
-  margin: 0 0 0.5rem 0;
-`;
-
-const HeaderDescription = styled.p`
-  color: #666;
-  margin: 0 0 1rem 0;
-  line-height: 1.5;
-`;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  gap: 1rem;
-`;
-
-const Button = styled.button<{ $variant?: 'primary' | 'secondary'; $disabled?: boolean }>`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1rem;
-  border-radius: 6px;
-  border: 1px solid;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  
-  ${props => props.$variant === 'primary' ? `
-    background: #0066cc;
-    border-color: #0066cc;
-    color: white;
-    
-    &:hover:not(:disabled) {
-      background: #0052a3;
-      border-color: #0052a3;
-    }
-  ` : `
-    background: white;
-    border-color: #e5e5e5;
-    color: #666;
-    
-    &:hover:not(:disabled) {
-      background: #f8f9fa;
-      border-color: #0066cc;
-      color: #0066cc;
-    }
-  `}
-  
-  ${props => props.$disabled && `
-    opacity: 0.5;
-    cursor: not-allowed;
-  `}
-`;
-
-const SuitesGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 1.5rem;
-`;
-
-const SuiteCardWrapper = styled.div`
-  position: relative;
-`;
-
-const SelectionCheckbox = styled.div`
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  z-index: 10;
-`;
-
-const Checkbox = styled.input`
-  width: 18px;
-  height: 18px;
-  accent-color: #0066cc;
-  cursor: pointer;
-`;
+import { Button, T } from '@admiral-ds/react-ui';
 
 export const TestExecutionTab = () => {
   const [runningSuites, setRunningSuites] = useState<Set<string>>(new Set());
@@ -111,7 +14,6 @@ export const TestExecutionTab = () => {
     
     console.log(`Running ${mockTestSuites.find(s => s.id === suiteId)?.name}...`);
 
-    // Simulate test execution
     setTimeout(() => {
       setRunningSuites(prev => {
         const newSet = new Set(prev);
@@ -148,53 +50,54 @@ export const TestExecutionTab = () => {
   };
 
   return (
-    <Container>
-      <HeaderCard>
-        <HeaderTitle>
-          <Play size={24} />
-          Test Execution Center
-        </HeaderTitle>
-        <HeaderDescription>
+    <div className="space-y-6">
+      <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-6">
+        <div className="flex items-center gap-2 mb-2">
+          <Play size={24} className="text-blue-600" />
+          <T font="H3" color="#0066cc">Test Execution Center</T>
+        </div>
+        <T font="Body1" color="#666" className="mb-4">
           Select and run automated test suites. Monitor execution progress and view results in real-time.
-        </HeaderDescription>
-        <ButtonGroup>
-          <Button 
-            $variant="primary"
-            $disabled={selectedSuites.size === 0}
+        </T>
+        <div className="flex gap-3">
+          <Button
+            appearance="primary"
+            disabled={selectedSuites.size === 0}
             onClick={handleRunSelected}
+            iconStart={<Play size={16} />}
           >
-            <Play size={16} />
             Run Selected ({selectedSuites.size})
           </Button>
-          <Button 
-            $variant="secondary"
-            $disabled={selectedSuites.size === 0}
+          <Button
+            appearance="secondary"
+            disabled={selectedSuites.size === 0}
             onClick={() => setSelectedSuites(new Set())}
+            iconStart={<RefreshCw size={16} />}
           >
-            <RefreshCw size={16} />
             Clear Selection
           </Button>
-        </ButtonGroup>
-      </HeaderCard>
+        </div>
+      </div>
 
-      <SuitesGrid>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {mockTestSuites.map((suite) => (
-          <SuiteCardWrapper key={suite.id}>
-            <SelectionCheckbox>
-              <Checkbox
+          <div key={suite.id} className="relative">
+            <div className="absolute top-4 right-4 z-10">
+              <input
                 type="checkbox"
                 checked={selectedSuites.has(suite.id)}
                 onChange={() => toggleSuiteSelection(suite.id)}
+                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
-            </SelectionCheckbox>
+            </div>
             <TestSuiteCard
               suite={suite}
               onRun={handleRunSuite}
               isRunning={runningSuites.has(suite.id)}
             />
-          </SuiteCardWrapper>
+          </div>
         ))}
-      </SuitesGrid>
-    </Container>
+      </div>
+    </div>
   );
 };

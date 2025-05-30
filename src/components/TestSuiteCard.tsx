@@ -1,157 +1,13 @@
 
 import { Play, Clock, FileCheck, AlertCircle } from 'lucide-react';
 import { TestSuite } from '../types/test';
-import styled from 'styled-components';
+import { Button, T, Badge } from '@admiral-ds/react-ui';
 
 interface TestSuiteCardProps {
   suite: TestSuite;
   onRun: (suiteId: string) => void;
   isRunning?: boolean;
 }
-
-const StyledCard = styled.div`
-  background: white;
-  border-radius: 8px;
-  padding: 1.5rem;
-  border-left: 4px solid #0066cc;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
-  height: 100%;
-
-  &:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    transform: translateY(-2px);
-  }
-`;
-
-const CardHeader = styled.div`
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-`;
-
-const TitleSection = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-`;
-
-const IconContainer = styled.div<{ $category: string }>`
-  padding: 0.5rem;
-  border-radius: 8px;
-  color: white;
-  background-color: ${props => {
-    switch (props.$category) {
-      case 'regression': return '#2196f3';
-      case 'smoke': return '#4caf50';
-      case 'hotfix': return '#f44336';
-      case 'integration': return '#9c27b0';
-      case 'unit': return '#ff9800';
-      default: return '#666';
-    }
-  }};
-`;
-
-const TitleText = styled.div`
-  h3 {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: #333;
-    margin: 0 0 0.25rem 0;
-  }
-`;
-
-const Badge = styled.span<{ $category: string }>`
-  display: inline-block;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  background-color: ${props => {
-    switch (props.$category) {
-      case 'regression': return '#e3f2fd';
-      case 'smoke': return '#e8f5e8';
-      case 'hotfix': return '#ffebee';
-      case 'integration': return '#f3e5f5';
-      case 'unit': return '#fff3e0';
-      default: return '#f5f5f5';
-    }
-  }};
-  color: ${props => {
-    switch (props.$category) {
-      case 'regression': return '#2196f3';
-      case 'smoke': return '#4caf50';
-      case 'hotfix': return '#f44336';
-      case 'integration': return '#9c27b0';
-      case 'unit': return '#ff9800';
-      default: return '#666';
-    }
-  }};
-`;
-
-const Description = styled.p`
-  color: #666;
-  font-size: 0.875rem;
-  line-height: 1.4;
-  margin: 0 0 1rem 0;
-`;
-
-const StatsContainer = styled.div`
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  font-size: 0.875rem;
-  color: #666;
-`;
-
-const StatItem = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-`;
-
-const Button = styled.button<{ $disabled?: boolean }>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  width: 100%;
-  padding: 0.75rem 1rem;
-  background: #0066cc;
-  border: 1px solid #0066cc;
-  border-radius: 6px;
-  color: white;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover:not(:disabled) {
-    background: #0052a3;
-    border-color: #0052a3;
-  }
-
-  ${props => props.$disabled && `
-    opacity: 0.7;
-    cursor: not-allowed;
-  `}
-`;
-
-const LoadingSpinner = styled.div`
-  width: 1rem;
-  height: 1rem;
-  border: 2px solid white;
-  border-top: 2px solid transparent;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-`;
 
 const categoryIcons = {
   regression: FileCheck,
@@ -161,8 +17,17 @@ const categoryIcons = {
   unit: FileCheck
 };
 
+const categoryColors = {
+  regression: '#2196f3',
+  smoke: '#4caf50',
+  hotfix: '#f44336',
+  integration: '#9c27b0',
+  unit: '#ff9800'
+};
+
 export const TestSuiteCard = ({ suite, onRun, isRunning = false }: TestSuiteCardProps) => {
   const CategoryIcon = categoryIcons[suite.category];
+  const categoryColor = categoryColors[suite.category];
   
   const formatDuration = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
@@ -171,52 +36,49 @@ export const TestSuiteCard = ({ suite, onRun, isRunning = false }: TestSuiteCard
   };
 
   return (
-    <StyledCard>
-      <CardHeader>
-        <TitleSection>
-          <IconContainer $category={suite.category}>
+    <div className="bg-white rounded-lg p-6 border-l-4 shadow-sm hover:shadow-md transition-shadow h-full"
+         style={{ borderLeftColor: categoryColor }}>
+      <div className="flex items-start justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <div 
+            className="p-2 rounded-lg text-white"
+            style={{ backgroundColor: categoryColor }}
+          >
             <CategoryIcon size={20} />
-          </IconContainer>
-          <TitleText>
-            <h3>{suite.name}</h3>
-            <Badge $category={suite.category}>
+          </div>
+          <div>
+            <T font="H5" color="#333" className="mb-1">{suite.name}</T>
+            <Badge appearance="info">
               {suite.category}
             </Badge>
-          </TitleText>
-        </TitleSection>
-      </CardHeader>
+          </div>
+        </div>
+      </div>
       
-      <Description>
+      <T font="Body2" color="#666" className="mb-4">
         {suite.description}
-      </Description>
+      </T>
       
-      <StatsContainer>
-        <StatItem>
+      <div className="flex gap-4 mb-4 text-sm text-gray-600">
+        <div className="flex items-center gap-1">
           <FileCheck size={16} />
           <span>{suite.testCount} tests</span>
-        </StatItem>
-        <StatItem>
+        </div>
+        <div className="flex items-center gap-1">
           <Clock size={16} />
           <span>~{formatDuration(suite.estimatedDuration)}</span>
-        </StatItem>
-      </StatsContainer>
+        </div>
+      </div>
       
-      <Button 
+      <Button
+        appearance="primary"
+        disabled={isRunning}
         onClick={() => onRun(suite.id)}
-        $disabled={isRunning}
+        iconStart={isRunning ? undefined : <Play size={16} />}
+        className="w-full"
       >
-        {isRunning ? (
-          <>
-            <LoadingSpinner />
-            Running...
-          </>
-        ) : (
-          <>
-            <Play size={16} />
-            Run Tests
-          </>
-        )}
+        {isRunning ? 'Running...' : 'Run Tests'}
       </Button>
-    </StyledCard>
+    </div>
   );
 };
