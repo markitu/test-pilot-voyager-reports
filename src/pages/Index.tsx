@@ -33,7 +33,7 @@ const Index = () => {
             </div>
             <div>
               <T font="Header/H4">AutoTest Manager</T>
-              <T font="Body/BodyM">Automated testing dashboard inspired by Allure</T>
+              <p className="text-gray-600">Automated testing dashboard inspired by Allure</p>
             </div>
           </div>
           <button className="flex items-center gap-2 px-4 py-2 bg-gray-100 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-200 transition-colors">
@@ -74,7 +74,7 @@ const Index = () => {
 
       <footer className="bg-white border-t border-gray-200 mt-12 py-6">
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
-          <T font="Body/BodyM">AutoTest Manager - Powered by Admiral Design System</T>
+          <p className="text-gray-600">AutoTest Manager - Powered by Admiral Design System</p>
           <div className="flex items-center gap-4 text-sm text-gray-500">
             <span>Version 1.0.0</span>
             <span>•</span>

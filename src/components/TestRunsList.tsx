@@ -86,8 +86,8 @@ export const TestRunsList = ({ runs, onSelectRun }: TestRunsListProps) => {
 
           <div className="mt-4">
             <div className="flex justify-between items-center mb-2">
-              <T font="Body/BodyM">Success Rate</T>
-              <T font="Body/BodyM" className="font-semibold">{getSuccessRate(run).toFixed(1)}%</T>
+              <span className="text-gray-600">Success Rate</span>
+              <span className="font-semibold">{getSuccessRate(run).toFixed(1)}%</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div 

@@ -56,9 +56,9 @@ export const TestExecutionTab = () => {
           <Play size={24} className="text-blue-600" />
           <T font="Header/H3">Test Execution Center</T>
         </div>
-        <T font="Body/BodyM" className="mb-4">
+        <p className="text-gray-600 mb-4">
           Select and run automated test suites. Monitor execution progress and view results in real-time.
-        </T>
+        </p>
         <div className="flex gap-3">
           <Button
             appearance="primary"

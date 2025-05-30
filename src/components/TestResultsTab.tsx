@@ -21,9 +21,9 @@ export const TestResultsTab = () => {
           <BarChart3 size={24} className="text-green-600" />
           <T font="Header/H3">Test Results & Analytics</T>
         </div>
-        <T font="Body/BodyM">
+        <p className="text-gray-600">
           Comprehensive view of test execution results, trends, and performance metrics.
-        </T>
+        </p>
       </div>
 
       <TestStatsDashboard statistics={mockStatistics} />
@@ -33,9 +33,9 @@ export const TestResultsTab = () => {
           <TrendingUp size={20} className="text-blue-600" />
           <T font="Header/H4">Recent Test Runs</T>
         </div>
-        <T font="Body/BodyM" className="mb-4">
+        <p className="text-gray-600 mb-4">
           Click on any test run to view detailed results and execution logs.
-        </T>
+        </p>
         <TestRunsList runs={mockTestRuns} onSelectRun={handleSelectRun} />
       </div>
     </div>

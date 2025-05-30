@@ -55,9 +55,9 @@ export const TestSuiteCard = ({ suite, onRun, isRunning = false }: TestSuiteCard
         </div>
       </div>
       
-      <T font="Body/BodyM" className="mb-4">
+      <p className="text-gray-600 mb-4">
         {suite.description}
-      </T>
+      </p>
       
       <div className="flex gap-4 mb-4 text-sm text-gray-600">
         <div className="flex items-center gap-1">
