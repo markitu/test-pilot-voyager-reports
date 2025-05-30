@@ -19,9 +19,9 @@ export const TestResultsTab = () => {
       <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-6">
         <div className="flex items-center gap-2 mb-2">
           <BarChart3 size={24} className="text-green-600" />
-          <T font="H3" color="#4caf50">Test Results & Analytics</T>
+          <T font="Header/H3">Test Results & Analytics</T>
         </div>
-        <T font="Body1" color="#666">
+        <T font="Body/BodyL">
           Comprehensive view of test execution results, trends, and performance metrics.
         </T>
       </div>
@@ -31,9 +31,9 @@ export const TestResultsTab = () => {
       <div className="bg-white rounded-lg p-6 shadow-sm">
         <div className="flex items-center gap-2 mb-2">
           <TrendingUp size={20} className="text-blue-600" />
-          <T font="H4" color="#333">Recent Test Runs</T>
+          <T font="Header/H4">Recent Test Runs</T>
         </div>
-        <T font="Body2" color="#666" className="mb-4">
+        <T font="Body/BodyM" className="mb-4">
           Click on any test run to view detailed results and execution logs.
         </T>
         <TestRunsList runs={mockTestRuns} onSelectRun={handleSelectRun} />

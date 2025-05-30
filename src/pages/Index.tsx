@@ -32,8 +32,8 @@ const Index = () => {
               <Bug size={24} />
             </div>
             <div>
-              <T font="H4" color="#333">AutoTest Manager</T>
-              <T font="Body2" color="#666">Automated testing dashboard inspired by Allure</T>
+              <T font="Header/H4">AutoTest Manager</T>
+              <T font="Body/BodyM">Automated testing dashboard inspired by Allure</T>
             </div>
           </div>
           <button className="flex items-center gap-2 px-4 py-2 bg-gray-100 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-200 transition-colors">
@@ -74,7 +74,7 @@ const Index = () => {
 
       <footer className="bg-white border-t border-gray-200 mt-12 py-6">
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
-          <T font="Body2" color="#666">AutoTest Manager - Powered by Admiral Design System</T>
+          <T font="Body/BodyM">AutoTest Manager - Powered by Admiral Design System</T>
           <div className="flex items-center gap-4 text-sm text-gray-500">
             <span>Version 1.0.0</span>
             <span>•</span>

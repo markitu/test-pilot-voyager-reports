@@ -47,7 +47,7 @@ export const TestSuiteCard = ({ suite, onRun, isRunning = false }: TestSuiteCard
             <CategoryIcon size={20} />
           </div>
           <div>
-            <T font="H5" color="#333" className="mb-1">{suite.name}</T>
+            <T font="Header/H5" className="mb-1">{suite.name}</T>
             <Badge appearance="info">
               {suite.category}
             </Badge>
@@ -55,7 +55,7 @@ export const TestSuiteCard = ({ suite, onRun, isRunning = false }: TestSuiteCard
         </div>
       </div>
       
-      <T font="Body2" color="#666" className="mb-4">
+      <T font="Body/BodyM" className="mb-4">
         {suite.description}
       </T>
       

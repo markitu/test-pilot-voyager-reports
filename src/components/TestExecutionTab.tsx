@@ -54,9 +54,9 @@ export const TestExecutionTab = () => {
       <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-6">
         <div className="flex items-center gap-2 mb-2">
           <Play size={24} className="text-blue-600" />
-          <T font="H3" color="#0066cc">Test Execution Center</T>
+          <T font="Header/H3">Test Execution Center</T>
         </div>
-        <T font="Body1" color="#666" className="mb-4">
+        <T font="Body/BodyL" className="mb-4">
           Select and run automated test suites. Monitor execution progress and view results in real-time.
         </T>
         <div className="flex gap-3">

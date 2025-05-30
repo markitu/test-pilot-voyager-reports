@@ -48,7 +48,7 @@ export const TestRunsList = ({ runs, onSelectRun }: TestRunsListProps) => {
                 className="w-3 h-3 rounded-full"
                 style={{ backgroundColor: statusColors[run.status] }}
               />
-              <T font="H5" color="#333">{run.suiteName}</T>
+              <T font="Header/H5">{run.suiteName}</T>
               <Badge appearance={run.status === 'completed' ? 'success' : run.status === 'failed' ? 'error' : 'info'}>
                 {run.status}
               </Badge>
@@ -86,8 +86,8 @@ export const TestRunsList = ({ runs, onSelectRun }: TestRunsListProps) => {
 
           <div className="mt-4">
             <div className="flex justify-between items-center mb-2">
-              <T font="Body2" color="#666">Success Rate</T>
-              <T font="Body2" color="#333" className="font-semibold">{getSuccessRate(run).toFixed(1)}%</T>
+              <T font="Body/BodyM">Success Rate</T>
+              <T font="Body/BodyM" className="font-semibold">{getSuccessRate(run).toFixed(1)}%</T>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div 
